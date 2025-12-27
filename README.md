@@ -190,7 +190,6 @@ saas/
 8. **CORS Configuration**: Controlled cross-origin requests
 
 ## 📊 Subscription Plans
-
 | Plan | Max Users | Max Projects | Price |
 |------|-----------|--------------|-------|
 | Free | 5 | 3 | $0/month |
