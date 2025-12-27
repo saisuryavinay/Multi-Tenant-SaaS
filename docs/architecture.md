@@ -265,7 +265,6 @@ Request → CORS → Body Parser → JWT Verify → Role Check → Controller �
 ## Deployment Architecture
 
 ### Docker Compose Services
-
 ```yaml
 database:
   - PostgreSQL 15 alpine
