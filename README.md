@@ -179,7 +179,6 @@ saas/
 - `PATCH /api/tasks/:id/status` - Update task status
 - `PUT /api/tasks/:id` - Update task
 **Total: 19 API Endpoints**
-
 ## 🔒 Security Features
 
 1. **Password Hashing**: Bcrypt with salt rounds 10
