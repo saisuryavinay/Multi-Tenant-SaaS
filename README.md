@@ -178,7 +178,6 @@ saas/
 - `GET /api/projects/:id/tasks` - List project tasks
 - `PATCH /api/tasks/:id/status` - Update task status
 - `PUT /api/tasks/:id` - Update task
-
 **Total: 19 API Endpoints**
 
 ## 🔒 Security Features
