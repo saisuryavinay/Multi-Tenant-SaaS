@@ -180,7 +180,6 @@ saas/
 - `PUT /api/tasks/:id` - Update task
 **Total: 19 API Endpoints**
 ## 🔒 Security Features
-
 1. **Password Hashing**: Bcrypt with salt rounds 10
 2. **JWT Authentication**: 24-hour token expiry
 3. **Tenant Isolation**: Automatic filtering by tenant_id
