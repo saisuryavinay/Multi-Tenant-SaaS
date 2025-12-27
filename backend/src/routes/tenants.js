@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const tenantController = require('../controllers/tenantController');
+const authenticate = require('../middleware/authenticate');
+const authorize = require('../middleware/authorize');
+
+router.get('/', authenticate, authorize('super_admin'), tenantController.listTenants);
+router.get('/:tenantId', authenticate, tenantController.getTenantDetails);
+router.put('/:tenantId', authenticate, tenantController.updateTenant);
+
+module.exports = router;
