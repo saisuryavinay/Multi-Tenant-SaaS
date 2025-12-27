@@ -445,7 +445,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 ```
-
 ## Testing
 
 ### Manual API Testing
