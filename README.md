@@ -45,7 +45,7 @@ A production-ready, multi-tenant SaaS application for project and task managemen
 ### 1. Clone the Repository
 
 ```bash
-git clone <https://github.com/saisuryavinay/Multi-Tenant-SaaS.git>
+git clone https://github.com/saisuryavinay/Multi-Tenant-SaaS.git
 cd Multi-Tenant SaaS
 ```
 
