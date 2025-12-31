@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 function ProjectDetails() {
   const { projectId } = useParams();
   const { user, loading: authLoading, activeTenantId } = useAuth();
+  const isReadOnly = user?.role === 'super_admin' || user?.role === 'superadmin';
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -86,7 +87,7 @@ function ProjectDetails() {
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">Project Tasks</h2>
-            <button onClick={() => setShowModal(true)} className="btn btn-primary">Add Task</button>
+            {!isReadOnly && <button onClick={() => setShowModal(true)} className="btn btn-primary">Add Task</button>}
           </div>
           {tasks.length > 0 ? (
             <table className="table">
@@ -105,9 +106,10 @@ function ProjectDetails() {
                     <td>
                       <select
                         value={task.status}
-                        onChange={(e) => updateTaskStatus(task.id, e.target.value)}
+                        onChange={isReadOnly ? undefined : (e) => updateTaskStatus(task.id, e.target.value)}
+                        disabled={isReadOnly}
                         className={`badge badge-${task.status === 'completed' ? 'success' : task.status === 'in_progress' ? 'warning' : 'info'}`}
-                        style={{border: 'none', cursor: 'pointer'}}
+                        style={{border: 'none', cursor: isReadOnly ? 'default' : 'pointer'}}
                       >
                         <option value="todo">To Do</option>
                         <option value="in_progress">In Progress</option>
@@ -126,7 +128,7 @@ function ProjectDetails() {
         </div>
       </div>
 
-      {showModal && (
+      {showModal && !isReadOnly && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">

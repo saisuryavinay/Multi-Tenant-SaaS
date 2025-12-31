@@ -17,7 +17,7 @@ function Navbar() {
       <ul className="navbar-menu">
         <li><Link to="/dashboard">Dashboard</Link></li>
         <li><Link to="/projects">Projects</Link></li>
-        {user?.role === 'tenant_admin' && <li><Link to="/users">Users</Link></li>}
+        {(user?.role === 'tenant_admin' || user?.role === 'super_admin' || user?.role === 'superadmin') && <li><Link to="/users">Users</Link></li>}
       </ul>
       <div className="navbar-user">
         {user?.role === 'super_admin' && (
@@ -37,7 +37,12 @@ function Navbar() {
         )}
         <div className="user-info">
           <div className="user-name">{user?.fullName}</div>
-          <div className="user-role">{user?.role}</div>
+          <div className="user-role">
+            {user?.role}
+            {(user?.role === 'super_admin' || user?.role === 'superadmin') && (
+              <span style={{ marginLeft: '8px', padding: '4px 8px', background: '#eee', borderRadius: '4px', fontSize: '12px' }}>Read-Only</span>
+            )}
+          </div>
         </div>
         <button onClick={handleLogout} className="btn btn-secondary">Logout</button>
       </div>

@@ -80,7 +80,8 @@ function Projects() {
     </div>
   );
 
-  const canShowSelector = user?.role === 'super_admin';
+  const canShowSelector = user?.role === 'super_admin' || user?.role === 'superadmin';
+  const isReadOnly = user?.role === 'super_admin' || user?.role === 'superadmin';
   const tenantId = user?.role === 'super_admin' ? activeTenantId : user?.tenant?.id;
   const requiresTenantSelection = canShowSelector && !tenantId;
 
@@ -130,7 +131,7 @@ function Projects() {
                 ))}
               </select>
             )}
-            <button onClick={() => setShowModal(true)} className="btn btn-primary">Create Project</button>
+            {!isReadOnly && <button onClick={() => setShowModal(true)} className="btn btn-primary">Create Project</button>}
           </div>
           {projects.length > 0 ? (
             <table className="table">
@@ -152,7 +153,9 @@ function Projects() {
                     <td>{project.completedTaskCount}/{project.taskCount}</td>
                     <td>
                       <Link to={`/projects/${project.id}`} className="btn btn-secondary">View</Link>
-                      <button onClick={() => handleDelete(project.id)} className="btn btn-danger" style={{marginLeft: '8px'}}>Delete</button>
+                      {!isReadOnly && (
+                        <button onClick={() => handleDelete(project.id)} className="btn btn-danger" style={{marginLeft: '8px'}}>Delete</button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -166,7 +169,7 @@ function Projects() {
         </div>
       </div>
 
-      {showModal && (
+      {showModal && !isReadOnly && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
