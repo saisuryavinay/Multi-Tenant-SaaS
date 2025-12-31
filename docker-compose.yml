@@ -35,8 +35,7 @@ services:
       JWT_EXPIRES_IN: 24h
       PORT: 5000
       NODE_ENV: production
-      # Use Docker service name for inter-service CORS in the Docker network
-      FRONTEND_URL: http://frontend:3000
+      FRONTEND_URL: http://localhost:3000
     depends_on:
       database:
         condition: service_healthy
@@ -53,14 +52,13 @@ services:
     build:
       context: ./frontend
       args:
-        # Build-time default; set to backend service in Docker network
-        REACT_APP_API_URL: http://backend:5000/api
+        # Build-time default; runtime code also falls back to host-based URL
+        REACT_APP_API_URL: http://localhost:5000/api
     container_name: frontend
     ports:
       - "3000:3000"
     environment:
-      # Use backend service name for inter-service calls from frontend
-      REACT_APP_API_URL: http://backend:5000/api
+      REACT_APP_API_URL: http://localhost:5000/api
     depends_on:
       - backend
     networks:

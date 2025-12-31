@@ -9,11 +9,6 @@ exports.createTask = async (req, res) => {
     const { title, description, assignedTo, priority, dueDate } = req.body;
     const { userId, tenantId, role } = req.user;
 
-    // Super admins are read-only
-    if (role === 'super_admin' || role === 'superadmin') {
-      return res.status(403).json({ success: false, message: 'Superadmin has read-only access and cannot create tasks' });
-    }
-
     // Validation
     if (!title) {
       return res.status(400).json({
@@ -162,8 +157,6 @@ exports.listTasks = async (req, res) => {
       LIMIT $${paramCount++} OFFSET $${paramCount}
     `;
 
-    console.log('[UPDATE_TASK] Query:', query);
-    console.log('[UPDATE_TASK] Values:', values);
     const result = await pool.query(query, values);
     
     console.log('[LIST_TASKS] Found', result.rows.length, 'tasks');
@@ -218,10 +211,6 @@ exports.updateTaskStatus = async (req, res) => {
     }
 
     // Get task and verify tenant (super_admin can update any task)
-    if (role === 'super_admin' || role === 'superadmin') {
-      return res.status(403).json({ success: false, message: 'Superadmin has read-only access and cannot update task status' });
-    }
-
     const taskCheck = await pool.query(
       role === 'super_admin'
         ? 'SELECT id, tenant_id FROM tasks WHERE id = $1'
@@ -267,10 +256,6 @@ exports.updateTask = async (req, res) => {
     const { taskId } = req.params;
     const { title, description, status, priority, assignedTo, dueDate } = req.body;
     const { tenantId, userId, role } = req.user;
-
-    if (role === 'super_admin' || role === 'superadmin') {
-      return res.status(403).json({ success: false, message: 'Superadmin has read-only access and cannot update tasks' });
-    }
 
     // Get task and verify tenant (super_admin can edit any task)
     const taskCheck = await pool.query(
@@ -347,7 +332,10 @@ exports.updateTask = async (req, res) => {
       UPDATE tasks
       SET ${updates.join(', ')}
       WHERE id = $${paramCount}
-      RETURNING tasks.*
+      RETURNING t.*, u.id as assigned_user_id, u.full_name as assigned_user_name, u.email as assigned_user_email
+      FROM tasks t
+      LEFT JOIN users u ON t.assigned_to = u.id
+      WHERE t.id = $${paramCount}
     `;
 
     const result = await pool.query(query, values);
@@ -355,18 +343,6 @@ exports.updateTask = async (req, res) => {
     await logAudit(auditTenantId, userId, 'UPDATE_TASK', 'task', taskId, req.ip);
 
     const task = result.rows[0];
-
-    let assignedUser = null;
-    if (task.assigned_to) {
-      const au = await pool.query('SELECT id, full_name, email FROM users WHERE id = $1', [task.assigned_to]);
-      if (au.rows.length > 0) {
-        assignedUser = {
-          id: au.rows[0].id,
-          fullName: au.rows[0].full_name,
-          email: au.rows[0].email
-        };
-      }
-    }
 
     res.json({
       success: true,
@@ -377,7 +353,11 @@ exports.updateTask = async (req, res) => {
         description: task.description,
         status: task.status,
         priority: task.priority,
-        assignedTo: assignedUser,
+        assignedTo: task.assigned_to ? {
+          id: task.assigned_user_id,
+          fullName: task.assigned_user_name,
+          email: task.assigned_user_email
+        } : null,
         dueDate: task.due_date,
         updatedAt: task.updated_at
       }

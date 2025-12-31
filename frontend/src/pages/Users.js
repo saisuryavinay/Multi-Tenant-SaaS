@@ -74,8 +74,7 @@ function Users() {
     }
   };
 
-  const isSuperAdmin = user?.role === 'super_admin' || user?.role === 'superadmin';
-  const isReadOnly = isSuperAdmin;
+  const isSuperAdmin = user?.role === 'super_admin';
   const tenantId = isSuperAdmin ? activeTenantId : user?.tenant?.id;
   const requiresTenantSelection = isSuperAdmin && !tenantId;
 
@@ -132,7 +131,7 @@ function Users() {
                 ))}
               </select>
             )}
-            {!isReadOnly && <button onClick={() => setShowModal(true)} className="btn btn-primary">Add User</button>}
+            <button onClick={() => setShowModal(true)} className="btn btn-primary">Add User</button>
           </div>
           <table className="table">
             <thead>
@@ -152,7 +151,7 @@ function Users() {
                   <td><span className="badge badge-primary">{u.role}</span></td>
                   <td><span className={`badge ${u.is_active ? 'badge-success' : 'badge-danger'}`}>{u.is_active ? 'Active' : 'Inactive'}</span></td>
                   <td>
-                    {u.id !== user.id && !isReadOnly && (
+                    {u.id !== user.id && (
                       <button onClick={() => handleDelete(u.id)} className="btn btn-danger">Delete</button>
                     )}
                   </td>

@@ -5,11 +5,6 @@ const { logAudit } = require('../utils/auditLogger');
 // Create Project (API 12)
 exports.createProject = async (req, res) => {
   try {
-
-    // Super admins have read-only access in the new policy
-    if (role === 'super_admin' || role === 'superadmin') {
-      return res.status(403).json({ success: false, message: 'Superadmin has read-only access and cannot create projects' });
-    }
     const { name, description, status, tenantId: bodyTenantId } = req.body;
     const { userId, tenantId: userTenantId, role } = req.user;
 
@@ -172,10 +167,6 @@ exports.updateProject = async (req, res) => {
     const { name, description, status } = req.body;
     const { role, userId, tenantId } = req.user;
 
-    if (role === 'super_admin' || role === 'superadmin') {
-      return res.status(403).json({ success: false, message: 'Superadmin has read-only access and cannot update projects' });
-    }
-
     // Get project
     const projectResult = await pool.query(
       'SELECT tenant_id, created_by FROM projects WHERE id = $1',
@@ -264,10 +255,6 @@ exports.deleteProject = async (req, res) => {
   try {
     const { projectId } = req.params;
     const { role, userId, tenantId } = req.user;
-
-    if (role === 'super_admin' || role === 'superadmin') {
-      return res.status(403).json({ success: false, message: 'Superadmin has read-only access and cannot delete projects' });
-    }
 
     // Get project
     const projectResult = await pool.query(

@@ -14,14 +14,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = [FRONTEND_URL, 'http://frontend:3000', 'http://127.0.0.1:3000'];
+    const allowedOrigins = ['http://localhost:3000', 'http://frontend:3000', 'http://127.0.0.1:3000', 'http://localhost:5000'];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed'));
+      console.log('[CORS] Allowing origin:', origin);
+      callback(null, true); // Allow all origins for development
     }
   },
   credentials: true
@@ -79,5 +79,5 @@ app.use((req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
-  console.log(`CORS enabled for: ${FRONTEND_URL}`);
+  console.log(`CORS enabled for: ${process.env.FRONTEND_URL}`);
 });
