@@ -294,8 +294,11 @@ exports.deleteUser = async (req, res) => {
 
     const targetTenantId = userResult.rows[0].tenant_id;
 
-    // Only tenant_admin can delete
-    if (userRole !== 'tenant_admin' || userTenantId !== targetTenantId) {
+    // Only tenant_admin or super_admin can delete
+    const isTenantAdmin = userRole === 'tenant_admin' && userTenantId === targetTenantId;
+    const isSuperAdmin = userRole === 'super_admin';
+
+    if (!isTenantAdmin && !isSuperAdmin) {
       return res.status(403).json({
         success: false,
         message: 'Insufficient permissions'
